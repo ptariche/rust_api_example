@@ -1,0 +1,10 @@
+[package]
+name = "api_example"
+version = "0.1.0"
+authors = ["Peter A. Tariche <ptariche@gmail.com>"]
+
+[dependencies]
+rustc-serialize = "0.3"
+
+[dependencies.nickel]
+git = "https://github.com/nickel-org/nickel.rs.git"
