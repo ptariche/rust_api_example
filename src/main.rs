@@ -1,15 +1,16 @@
-#[macro_use] extern crate nickel;
+#[macro_use] 
+
+extern crate nickel;
 extern crate rustc_serialize;
 
 use std::env;
 use std::net::SocketAddr;
-use nickel::status::StatusCode;
 
-use nickel::{Nickel, JsonBody, HttpRouter, MediaType};
-use rustc_serialize::json::{ToJson};
+use nickel::{Nickel, HttpRouter};
 
 mod models;
 mod routes;
+mod helpers;
 
 fn main() {
 
@@ -20,19 +21,9 @@ fn main() {
     let mut server = Nickel::new();
     let mut router = Nickel::router();
 
-    router.get("/:last/:first", routes::names::get);
-
-    router.get("/", middleware! { |_, mut response|
-        response.set(MediaType::Json);
-        r#"{ "foo": "bar" }"#
-    });
-
-    router.post("/", middleware! { |request, response|
-        let person = try_with!(response, {
-            request.json_as::<models::people::Person>().map_err(|e| (StatusCode::BadRequest, e))
-        });
-        format!("Hello {} {}", person.first_name, person.last_name)
-    });
+    router.get("/", routes::default::get);
+    router.get("/:last/:first", routes::person::get);
+    router.post("/person/create", routes::person::post);
 
     let server_details : String = format!("{}{}{}", host, ":", port);
 
