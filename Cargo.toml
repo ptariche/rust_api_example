@@ -1,9 +1,10 @@
 [package]
+authors = ["Peter A. Tariche <ptariche@gmail.com>"]
 name = "api_example"
 version = "0.1.0"
-authors = ["Peter A. Tariche <ptariche@gmail.com>"]
 
 [dependencies]
+hyper = "0.9.10"
 rustc-serialize = "0.3"
 
 [dependencies.nickel]

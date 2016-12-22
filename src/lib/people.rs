@@ -1,11 +1,11 @@
 use std::collections::BTreeMap;
 use rustc_serialize::json::{Json, ToJson};
 
-
 #[derive(RustcDecodable, RustcEncodable)]
+
 pub struct Person {
     pub first_name: String,
-    pub last_name:  String,
+    pub last_name: String,
 }
 
 impl ToJson for Person {
