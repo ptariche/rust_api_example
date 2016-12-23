@@ -10,6 +10,7 @@ pub struct Response {
 impl ToJson for Response {
     fn to_json(&self) -> Json {
         let mut map = BTreeMap::new();
+
         map.insert("success".to_string(), self.success.to_json());
         map.insert("code".to_string(), self.code.to_json());
         map.insert("data".to_string(), self.data.to_json());

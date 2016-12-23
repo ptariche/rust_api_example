@@ -11,8 +11,10 @@ pub struct Person {
 impl ToJson for Person {
     fn to_json(&self) -> Json {
         let mut map = BTreeMap::new();
+
         map.insert("first_name".to_string(), self.first_name.to_json());
         map.insert("last_name".to_string(), self.last_name.to_json());
+
         Json::Object(map)
     }
 }

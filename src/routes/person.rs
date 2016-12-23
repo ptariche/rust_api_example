@@ -1,11 +1,11 @@
-use nickel::{Request, Response, MiddlewareResult, JsonBody};
+use nickel::{Request, Response, MiddlewareResult, JsonBody, MediaType};
 use nickel::status::StatusCode;
 use rustc_serialize::json::{ToJson};
-use helpers;
 
+use helpers;
 use lib;
 
-pub fn get<'a>(req: &mut Request, res: Response<'a>) -> MiddlewareResult<'a> {
+pub fn get<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a> {
   let first_name = req.param("first").unwrap();
   let last_name = req.param("last").unwrap();
 
@@ -20,10 +20,11 @@ pub fn get<'a>(req: &mut Request, res: Response<'a>) -> MiddlewareResult<'a> {
     data: person.to_json()
   };
 
+  res.set(MediaType::Json);
   res.send(response.to_json())
 }
 
-pub fn post<'a>(req: &mut Request, res: Response<'a>) -> MiddlewareResult<'a> {
+pub fn post<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a> {
   let person = try_with!(res, {
       req.json_as::<lib::people::Person>().map_err(|e| (StatusCode::BadRequest, e))
   });
@@ -34,5 +35,6 @@ pub fn post<'a>(req: &mut Request, res: Response<'a>) -> MiddlewareResult<'a> {
     data: person.to_json()
   };
 
+  res.set(MediaType::Json);
   res.send(response.to_json())
 }
