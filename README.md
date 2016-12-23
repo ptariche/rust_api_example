@@ -14,8 +14,11 @@ Playing with Rust and Nickel
 
 ### Routes
 ```
-http://127.0.0.1:6767/:last_name/:first_name
-http://127.0.0.1:6767/
+
+GET - http://127.0.0.1:4001/
+GET - http://127.0.0.1:4001/:last_name/:first_name
+POST http://127.0.0.1:4001/person/create
+
 ```
 
 ## To run

@@ -2,6 +2,7 @@ use nickel::{Request, Response, MiddlewareResult, MediaType};
 use std::collections::BTreeMap;
 use rustc_serialize::json::{ToJson, Json};
 use chrono::{UTC, Local, DateTime};
+use nickel::status::StatusCode;
 
 use helpers;
 
@@ -40,5 +41,6 @@ pub fn get<'a>(_req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a
   };
 
   res.set(MediaType::Json);
+  res.set(StatusCode::Ok);
   res.send(response.to_json())
 }

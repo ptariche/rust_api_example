@@ -30,8 +30,8 @@ fn main() {
     server.utilize(middleware::cors::enable_cors);
     server.utilize(router);
 
-    let port : String = env::var("PORT").expect("Missing env var `PORT`");
-    let host : String = env::var("HOST").expect("Missing env var `HOST`");
+    let port : String = env::var("PORT").unwrap_or("4001".to_owned());
+    let host : String = env::var("HOST").unwrap_or("127.0.0.1".to_owned());
     let server_details : String = format!("{}{}{}", host, ":", port);
     let server_address : SocketAddr = server_details.parse()
         .expect("Unable to parse socket address");

@@ -21,6 +21,7 @@ pub fn get<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a>
   };
 
   res.set(MediaType::Json);
+  res.set(StatusCode::Ok);
   res.send(response.to_json())
 }
 
@@ -31,10 +32,11 @@ pub fn post<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a
 
   let response = helpers::status::Response {
     success: true,
-    code: 200,
+    code: 201,
     data: person.to_json()
   };
 
   res.set(MediaType::Json);
+  res.set(StatusCode::Ok);
   res.send(response.to_json())
 }
