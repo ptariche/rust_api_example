@@ -3,7 +3,8 @@ use rustc_serialize::json::{Json, ToJson};
 
 pub struct Response {
     pub success: bool,
-    pub code: u8
+    pub code: u8,
+    pub data: Json
 }
 
 impl ToJson for Response {
@@ -11,6 +12,8 @@ impl ToJson for Response {
         let mut map = BTreeMap::new();
         map.insert("success".to_string(), self.success.to_json());
         map.insert("code".to_string(), self.code.to_json());
+        map.insert("data".to_string(), self.data.to_json());
+
         Json::Object(map)
     }
 }
