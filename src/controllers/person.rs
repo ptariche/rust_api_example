@@ -114,6 +114,9 @@ pub fn post<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a
       .get_result::<models::people::Person>(&connection)
       .expect("create_user_fail");
 
+
+    println!("{:?}", result);
+
     response = helpers::status::Response {
       success: true,
       code: 201,
