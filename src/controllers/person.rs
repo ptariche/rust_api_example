@@ -112,40 +112,54 @@ pub fn post<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a
     req.json_as::<models::people::NewPerson>().map_err(|e| (StatusCode::BadRequest, e))
   });
 
-
-  let results = persons.filter(email.eq(&person.email))
-    .load::<models::people::Person>(&connection)
-    .expect("error pulling person matching uuid");
-
+  let valid_email = helpers::validator::validate(&person.email, helpers::validator::ValidTypes::Email);
   let response;
 
+  if valid_email {
+    let results = persons.filter(email.eq(&person.email))
+      .load::<models::people::Person>(&connection)
+      .expect("error pulling person matching uuid");
+
     if results.len() == 1 {
-    let error = helpers::status::Error {
-      error : "Another person is already associated with that email address.".to_string(),
-    };
+      let error = helpers::status::Error {
+        error : "Another person is already associated with that email address.".to_string(),
+      };
 
-    response = helpers::status::Response {
-      success: false,
-      code: 409,
-      data: error.to_json()
-    };
-    res.set(StatusCode::Conflict);
+      response = helpers::status::Response {
+        success: false,
+        code: 409,
+        data: error.to_json()
+      };
+      res.set(StatusCode::Conflict);
+    } else {
+      let result = diesel::insert(&person)
+        .into(lib::schema::persons::table)
+        .get_result::<models::people::Person>(&connection)
+        .expect("create_user_fail");
+
+
+      println!("{:?}", result);
+
+      response = helpers::status::Response {
+        success: true,
+        code: 201,
+        data: result.to_json()
+      };
+
+      res.set(StatusCode::Created);
+    }
+
   } else {
-    let result = diesel::insert(&person)
-      .into(lib::schema::persons::table)
-      .get_result::<models::people::Person>(&connection)
-      .expect("create_user_fail");
+      let error = helpers::status::Error {
+        error : "Please provide a valid email address".to_string(),
+      };
 
-
-    println!("{:?}", result);
-
-    response = helpers::status::Response {
-      success: true,
-      code: 201,
-      data: result.to_json()
-    };
-
-    res.set(StatusCode::Created);
+      response = helpers::status::Response {
+        success: false,
+        code: 412,
+        data: error.to_json()
+      };
+      res.set(StatusCode::PreconditionFailed);
   }
 
 

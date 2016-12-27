@@ -9,6 +9,7 @@ extern crate rustc_serialize;
 extern crate hyper;
 extern crate chrono;
 extern crate uuid;
+extern crate regex;
 
 use std::env;
 use std::net::SocketAddr;
