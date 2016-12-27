@@ -18,3 +18,18 @@ impl ToJson for Response {
         Json::Object(map)
     }
 }
+
+pub struct Error {
+    pub error: String,
+}
+
+
+impl ToJson for Error {
+    fn to_json(&self) -> Json {
+        let mut map = BTreeMap::new();
+
+        map.insert("error".to_string(), self.error.to_json());
+
+        Json::Object(map)
+    }
+}

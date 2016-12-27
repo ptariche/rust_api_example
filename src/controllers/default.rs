@@ -7,7 +7,6 @@ use nickel::status::StatusCode;
 use helpers;
 
 #[derive(RustcDecodable, RustcEncodable)]
-
 struct Data {
   utc_rfc2822: String,
   local_rfc2822: String

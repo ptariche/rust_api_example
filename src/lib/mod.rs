@@ -1,1 +1,2 @@
-pub mod people;
+pub mod schema;
+pub mod db;
