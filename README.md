@@ -16,10 +16,11 @@ Playing with Rust, Nickel, Postgres, Basic API Example
 
 ### Routes
 ```
+METHOD  - ROUTE
 
 GET     - http://127.0.0.1:4001/
 GET     - http://127.0.0.1:4001/person/:uuid/lookup
-UPDATE  - http://127.0.0.1:4001/person/:uuid/update
+PUT     - http://127.0.0.1:4001/person/:uuid/update
 DELETE  - http://127.0.0.1:4001/person/:uuid/destroy
 POST    - http://127.0.0.1:4001/person/create
 
