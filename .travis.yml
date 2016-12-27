@@ -1,7 +1,10 @@
+
 language: rust
 sudo: required
 dist: trusty
 rust:
+  - stable
+  - beta
   - nightly
 cache: cargo
 addons:
@@ -10,8 +13,10 @@ before_script:
   - pip install 'travis-cargo<0.2' --user
   - export PATH=$HOME/.local/bin:$PATH
   - psql -c 'create database diesel_schema;' -U postgres
-matrix:
+env:
+  matrix:
     - BACKEND=postgres
-    - DATABASE_URL=postgres://postgres@localhost/
-  allow_failures:
-    - rust: nightly
+      DATABASE_URL=postgres://postgres@localhost/
+branches:
+  only:
+    - master
