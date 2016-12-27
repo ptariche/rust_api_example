@@ -17,9 +17,10 @@ Playing with Rust, Nickel, Postgres, Basic API Example
 ### Routes
 ```
 
-GET  - http://127.0.0.1:4001/
-GET  - http://127.0.0.1:4001/person/:uuid
-POST - http://127.0.0.1:4001/person/create
+GET     - http://127.0.0.1:4001/
+GET     - http://127.0.0.1:4001/person/lookup/:uuid
+DELETE  - http://127.0.0.1:4001/person/destroy/:uuid
+POST    - http://127.0.0.1:4001/person/create
 
 ```
 

@@ -3,7 +3,7 @@ use rustc_serialize::json::{Json, ToJson};
 
 pub struct Response {
     pub success: bool,
-    pub code: u8,
+    pub code: i32,
     pub data: Json
 }
 

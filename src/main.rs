@@ -31,7 +31,9 @@ fn main() {
     let mut router = Nickel::router();
 
     router.get("/", controllers::default::get);
-    router.get("/person/:uuid", controllers::person::get);
+    router.get("/person/lookup/:uuid", controllers::person::get);
+    router.put("/person/update/:uuid", controllers::person::put);
+    router.delete("/person/destroy/:uuid", controllers::person::delete);
     router.post("/person/create", controllers::person::post);
 
     let custom_handler: fn(&mut NickelError<()>, &mut Request<()>) -> Action = middleware::errors::enable_handler;
