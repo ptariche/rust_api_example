@@ -4,7 +4,6 @@ sudo: required
 dist: trusty
 rust:
   - nightly
-cache: cargo
 addons:
   postgresql: '9.4'
 before_script:
@@ -12,12 +11,12 @@ before_script:
   - export PATH=$HOME/.local/bin:$PATH
   - psql -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' -U postgres
   - cargo install diesel_cli
-  - /home/travis/.cargo/bin/diesel setup --database-url='postgres://127.0.0.1/postgres'
-  - DATABASE_URL='postgres://127.0.0.1/postgres' /home/travis/.cargo/bin/diesel migration redo
+  - diesel setup --database-url='postgres://localhost/postgres'
+  - DATABASE_URL='postgres://localhost/postgres' diesel migration redo
 env:
   matrix:
     - BACKEND=postgres
-      DATABASE_URI=postgresql://127.0.0.1/postgres
+      DATABASE_URI=postgresql://127.0.0.1:5432/postgres
 branches:
   only:
     - master
