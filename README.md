@@ -18,8 +18,9 @@ Playing with Rust, Nickel, Postgres, Basic API Example
 ```
 
 GET     - http://127.0.0.1:4001/
-GET     - http://127.0.0.1:4001/person/lookup/:uuid
-DELETE  - http://127.0.0.1:4001/person/destroy/:uuid
+GET     - http://127.0.0.1:4001/person/:uuid/lookup
+UPDATE  - http://127.0.0.1:4001/person/:uuid/update
+DELETE  - http://127.0.0.1:4001/person/:uuid/destroy
 POST    - http://127.0.0.1:4001/person/create
 
 ```
