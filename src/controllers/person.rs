@@ -20,18 +20,18 @@ pub fn get<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a>
 
   let input_uuid = Uuid::parse_str(req.param("uuid").unwrap()).unwrap();
   let results = persons.filter( uuid.eq(input_uuid))
-        .load::<models::people::Person>(&connection)
-        .expect("error pulling person matching uuid");
+    .load::<models::people::Person>(&connection)
+    .expect("error pulling person matching uuid");
 
   let response;
-	if results.len() == 1 {
+  if results.len() == 1 {
     let person = &results[0];
     response = helpers::status::Response {
       success: true,
       code: 200,
       data: person.to_json()
     };
-  
+
     res.set(StatusCode::Ok);
 
   } else {
@@ -45,7 +45,7 @@ pub fn get<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a>
       data: error.to_json()
     };
 
-  res.set(StatusCode::BadRequest);
+    res.set(StatusCode::BadRequest);
 
   }
 
@@ -66,16 +66,16 @@ pub fn put<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a>
   });
 
   let results = persons.filter( uuid.eq(input_uuid))
-        .load::<models::people::Person>(&connection)
-        .expect("error pulling person matching uuid");
+    .load::<models::people::Person>(&connection)
+    .expect("error pulling person matching uuid");
 
   let response;
 
-	if results.len() == 1 {
+    if results.len() == 1 {
     let result = diesel::update(persons.filter(uuid.eq(input_uuid)))
-        .set(&person)
-        .get_result::<models::people::Person>(&connection)
-        .expect(&format!("Unable to find person {}", input_uuid));
+      .set(&person)
+      .get_result::<models::people::Person>(&connection)
+      .expect(&format!("Unable to find person {}", input_uuid));
 
     response = helpers::status::Response {
       success: true,
@@ -94,7 +94,7 @@ pub fn put<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a>
       code: 412,
       data: error.to_json()
     };
-    
+
     res.set(StatusCode::PreconditionFailed);
 
   }
@@ -109,17 +109,17 @@ pub fn post<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a
   let connection = lib::db::establish_connection();
 
   let person = try_with!(res, {
-      req.json_as::<models::people::NewPerson>().map_err(|e| (StatusCode::BadRequest, e))
+    req.json_as::<models::people::NewPerson>().map_err(|e| (StatusCode::BadRequest, e))
   });
 
 
   let results = persons.filter(email.eq(&person.email))
-        .load::<models::people::Person>(&connection)
-        .expect("error pulling person matching uuid");
+    .load::<models::people::Person>(&connection)
+    .expect("error pulling person matching uuid");
 
   let response;
 
-	if results.len() == 1 { 
+    if results.len() == 1 {
     let error = helpers::status::Error {
       error : "Another person is already associated with that email address.".to_string(),
     };
@@ -160,8 +160,8 @@ pub fn delete<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<
 
   let input_uuid = Uuid::parse_str(req.param("uuid").unwrap()).unwrap();
   let result = diesel::delete(persons.filter( uuid.eq(input_uuid)))
-      .execute(&connection)
-      .expect("Error deleting person");
+    .execute(&connection)
+    .expect("Error deleting person");
 
   let response;
 
@@ -173,11 +173,11 @@ pub fn delete<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<
       data: message.to_json()
     };
   } else {
-      let error = helpers::status::Error {
-        error : "The resource looks to have already been destroyed".to_string(),
-      };
+    let error = helpers::status::Error {
+      error : "The resource looks to have already been destroyed".to_string(),
+    };
 
-      response = helpers::status::Response {
+    response = helpers::status::Response {
       success: false,
       code: 410,
       data: error.to_json()

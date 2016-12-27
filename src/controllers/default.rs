@@ -14,17 +14,17 @@ struct Data {
 
 impl ToJson for Data {
   fn to_json(&self) -> Json {
-      let mut map = BTreeMap::new();
-  
-      map.insert("utc_rfc2822".to_string(), self.utc_rfc2822.to_json());
-      map.insert("local_rfc2822".to_string(), self.local_rfc2822.to_json());
+    let mut map = BTreeMap::new();
 
-      Json::Object(map)
+    map.insert("utc_rfc2822".to_string(), self.utc_rfc2822.to_json());
+    map.insert("local_rfc2822".to_string(), self.local_rfc2822.to_json());
+
+    Json::Object(map)
   }
 }
 
 pub fn get<'a>(_req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a> {
-  
+
   let utc_stamp: DateTime<UTC> = UTC::now();
   let local_stamp: DateTime<Local> = Local::now();
 
