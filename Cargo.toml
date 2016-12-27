@@ -7,7 +7,6 @@ version = "0.2.0"
 hyper = "0.9.10"
 rustc-serialize = "0.3"
 chrono = { version = "0.2", features = ["rustc-serialize"] }
-nickel-diesel = "0.4.0"
 dotenv = "0.8.0"
 diesel_codegen = { version = "0.9", features = ["postgres"] }
 uuid = { version = "^0.3.1", features = ["rustc-serialize"] }

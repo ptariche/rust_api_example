@@ -5,14 +5,19 @@ Playing with Rust, Nickel, Postgres, Basic API Example
  - I'm teaching myself rust; this is a very basic example with Nickel with Diesel utilizing Postgres
 
 ### Pre-requisites
- - Install Rust
+ - [Install Rust](https://www.rust-lang.org/en-US/install.html)
  - Rustup to nightly build required
+  - curl -s https://static.rust-lang.org/rustup.sh | sh -s -- --channel=nightly
+  - rustup update
+  - rustup install nightly
+    - rustup run nightly rustc --version
+    - rustup default nightly
+  - cargo update
  - Postgres
   - CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
-### Build
-- cargo build
-- cargon run
+ - cargo install diesel_cli
+  - diesel setup --database-url='postgres://localhost/postgres'
+  - DATABASE_URL='postgres://localhost/postgres' diesel migration redo
 
 ### Routes
 ```
@@ -31,5 +36,9 @@ POST    - http://127.0.0.1:4001/person/create
   - HOST
   - DATABASE_URI
 
-## To run
+
+## Build
+  - PORT=4001 HOST=127.0.0.1 DATABASE_URI=postgresql://127.0.0.1:5432/postgres cargo build
+
+## Run
  - PORT=4001 HOST=127.0.0.1 DATABASE_URI=postgresql://127.0.0.1:5432/postgres cargo run
