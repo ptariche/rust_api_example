@@ -11,12 +11,13 @@ before_script:
   - export PATH=$HOME/.local/bin:$PATH
   - psql -c 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp";' -U postgres
   - cargo install diesel_cli
-  - diesel setup --database-url='postgres://localhost/postgres'
-  - DATABASE_URL='postgres://localhost/postgres' diesel migration redo
+  - export PATH="${HOME}/.cargo/bin:${PATH}"
+  - diesel setup --database-url='postgres://127.0.0.1/postgres'
+  - DATABASE_URL='postgres://127.0.0.1/postgres' diesel migration redo
 env:
   matrix:
     - BACKEND=postgres
-      DATABASE_URI=postgresql://127.0.0.1:5432/postgres
+      DATABASE_URI=postgresql://127.0.0.1/postgres
 branches:
   only:
     - master
