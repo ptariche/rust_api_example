@@ -12,6 +12,6 @@ before_script:
   - psql -c 'create database diesel_schema;' -U postgres
 matrix:
     - BACKEND=postgres
-      DATABASE_URL=postgres://postgres@localhost/
+    - DATABASE_URL=postgres://postgres@localhost/
   allow_failures:
     - rust: nightly
