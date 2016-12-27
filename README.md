@@ -1,6 +1,8 @@
 # Rust API Example
 Playing with Rust, Nickel, Postgres, Basic API Example
 
+[![Build Status](https://travis-ci.org/ptariche/rust_api_example.svg?branch=master)](https://travis-ci.org/ptariche/rust_api_example)
+
 ### About
  - I'm teaching myself rust; this is a very basic example with Nickel with Diesel utilizing Postgres
 
