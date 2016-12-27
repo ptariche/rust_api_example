@@ -14,7 +14,7 @@ before_script:
 env:
   matrix:
     - BACKEND=postgres
-      DATABASE_URL=postgres://postgres@localhost/
+      DATABASE_URI=postgresql://127.0.0.1:5432/postgres
 branches:
   only:
     - master
