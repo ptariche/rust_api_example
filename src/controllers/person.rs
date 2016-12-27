@@ -97,7 +97,7 @@ pub fn post<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a
 
   let response;
 
-	if results.len() == 1 {
+	if results.len() == 1 { 
     let error = helpers::status::Error {
       error : "Another person is already associated with that email address.".to_string(),
     };
@@ -113,9 +113,6 @@ pub fn post<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a
       .into(lib::schema::persons::table)
       .get_result::<models::people::Person>(&connection)
       .expect("create_user_fail");
-
-
-    println!("{:?}", result);
 
     response = helpers::status::Response {
       success: true,
