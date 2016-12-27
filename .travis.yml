@@ -1,8 +1,9 @@
 language: rust
-rust:
-  - 1.0.0
+script:
+  - nightly
 os:
   - linux
-script:
-  - cargo build -v
-  - cargo test
+matrix:
+  allow_failures:
+    - rust: nightly
+script: make all
