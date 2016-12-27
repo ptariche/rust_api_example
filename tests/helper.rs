@@ -3,11 +3,10 @@
 mod tests {
   mod helper {
     mod status {
-        #[test]
-        fn response() {
-          assert!(true);
-        }
+      #[test]
+      fn response() {
+        assert!(true);
+      }
     }
   }
-
 }

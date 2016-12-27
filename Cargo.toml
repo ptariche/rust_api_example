@@ -1,7 +1,7 @@
 [package]
 authors = ["Peter A. Tariche <ptariche@gmail.com>"]
 name = "api_example"
-version = "0.1.0"
+version = "0.2.0"
 
 [dependencies]
 hyper = "0.9.10"

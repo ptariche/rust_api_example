@@ -3,10 +3,10 @@
 mod tests {
   mod lib {
     mod people {
-        #[test]
-        fn person() {
-          assert!(true);
-        }
+      #[test]
+      fn person() {
+        assert!(true);
+      }
     }
   }
 }
