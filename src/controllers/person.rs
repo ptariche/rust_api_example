@@ -55,51 +55,83 @@ pub fn get<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a>
   res.send(response.to_json())
 }
 
+
+fn validate_put (t: &models::people::UpdatePerson, u: &str) -> BTreeMap<String, Vec<String>> {
+  let mut validations: BTreeMap<String, Vec<String>> = BTreeMap::new();
+
+  validations.insert("uuid".to_string(), vec![u.to_string(), helpers::validator::ValidTypes::Uuid.to_string()]);
+  validations.insert("first_name".to_string(), vec![t.first_name.to_string(), helpers::validator::ValidTypes::AlphaNumberic.to_string()]);
+  validations.insert("last_name".to_string(), vec![t.last_name.to_string(), helpers::validator::ValidTypes::AlphaNumberic.to_string()]);
+
+  let result = helpers::validator::validate_map(validations);
+
+  result
+}
+
 pub fn put<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a> {
   use lib::schema::persons::dsl::{persons, uuid};
 
   let connection = lib::db::establish_connection();
 
-  let input_uuid = Uuid::parse_str(req.param("uuid").unwrap()).unwrap();
-
   let person = try_with!(res, {
       req.json_as::<models::people::UpdatePerson>().map_err(|e| (StatusCode::BadRequest, e))
   });
 
-  let results = persons.filter( uuid.eq(input_uuid))
-    .load::<models::people::Person>(&connection)
-    .expect("error pulling person matching uuid");
+  let validation: BTreeMap<String, Vec<String>> = validate_put(&person, req.param("uuid").unwrap());
+  let validation_json = validation.clone();
+  let is_valid = helpers::validator::has_errors(validation);
 
   let response;
 
-  if results.len() == 1 {
-    let result = diesel::update(persons.filter(uuid.eq(input_uuid)))
-      .set(&person)
-      .get_result::<models::people::Person>(&connection)
-      .expect(&format!("Unable to find person {}", input_uuid));
+  if is_valid {
+    let input_uuid = Uuid::parse_str(req.param("uuid").unwrap()).unwrap();
+    let results = persons.filter( uuid.eq(input_uuid))
+      .load::<models::people::Person>(&connection)
+      .expect("error pulling person matching uuid");
 
-    response = helpers::status::Response {
-      success: true,
-      code: 200,
-      data: result.to_json()
-    };
+    if results.len() == 1 {
+      let result = diesel::update(persons.filter(uuid.eq(input_uuid)))
+        .set(&person)
+        .get_result::<models::people::Person>(&connection)
+        .expect(&format!("Unable to find person {}", input_uuid));
 
-    res.set(StatusCode::Ok);
+      response = helpers::status::Response {
+        success: true,
+        code: 200,
+        data: result.to_json()
+      };
 
+      res.set(StatusCode::Ok);
+
+    } else {
+      let error = helpers::status::Error {
+        error : "A pre-condition of the identifier server-side was not fulfilled".to_string(),
+        case: Json::from_str("{}").unwrap()
+      };
+      response = helpers::status::Response {
+        success: false,
+        code: 412,
+        data: error.to_json()
+      };
+
+      res.set(StatusCode::PreconditionFailed);
+
+    }
   } else {
+    let case = format!("{:?}", validation_json);
     let error = helpers::status::Error {
-      error : "A pre-condition of the identifier server-side was not fulfilled".to_string(),
-      case: Json::from_str("{}").unwrap()
+      error : "There is one or more validation error".to_string(),
+      case: Json::from_str(&case).unwrap()
     };
+
     response = helpers::status::Response {
       success: false,
       code: 412,
       data: error.to_json()
     };
-
     res.set(StatusCode::PreconditionFailed);
-
   }
+
 
   res.set(MediaType::Json);
   res.send(response.to_json())
@@ -165,18 +197,18 @@ pub fn post<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a
     }
 
   } else {
-      let case = format!("{:?}", validation_json);
-      let error = helpers::status::Error {
-        error : "There is one or more validation error".to_string(),
-        case: Json::from_str(&case).unwrap()
-      };
+    let case = format!("{:?}", validation_json);
+    let error = helpers::status::Error {
+      error : "There is one or more validation error".to_string(),
+      case: Json::from_str(&case).unwrap()
+    };
 
-      response = helpers::status::Response {
-        success: false,
-        code: 412,
-        data: error.to_json()
-      };
-      res.set(StatusCode::PreconditionFailed);
+    response = helpers::status::Response {
+      success: false,
+      code: 412,
+      data: error.to_json()
+    };
+    res.set(StatusCode::PreconditionFailed);
   }
 
 
