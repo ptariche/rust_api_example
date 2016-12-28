@@ -1,7 +1,7 @@
 use nickel::{Request, Response, MiddlewareResult, JsonBody, MediaType};
 use nickel::status::StatusCode;
-use rustc_serialize::json::{ToJson};
-
+use rustc_serialize::json::{ToJson, Json};
+use std::collections::BTreeMap;
 use diesel::ExpressionMethods;
 use diesel::FilterDsl;
 use diesel::ExecuteDsl;
@@ -37,6 +37,7 @@ pub fn get<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a>
   } else {
     let error = helpers::status::Error {
       error : "An error occured attempting to look up the given identifier".to_string(),
+      case: Json::from_str("{}").unwrap()
     };
 
     response = helpers::status::Response {
@@ -71,7 +72,7 @@ pub fn put<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a>
 
   let response;
 
-    if results.len() == 1 {
+  if results.len() == 1 {
     let result = diesel::update(persons.filter(uuid.eq(input_uuid)))
       .set(&person)
       .get_result::<models::people::Person>(&connection)
@@ -88,6 +89,7 @@ pub fn put<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a>
   } else {
     let error = helpers::status::Error {
       error : "A pre-condition of the identifier server-side was not fulfilled".to_string(),
+      case: Json::from_str("{}").unwrap()
     };
     response = helpers::status::Response {
       success: false,
@@ -103,6 +105,18 @@ pub fn put<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a>
   res.send(response.to_json())
 }
 
+fn validate_post (t: &models::people::NewPerson) -> BTreeMap<String, Vec<String>> {
+  let mut validations: BTreeMap<String, Vec<String>> = BTreeMap::new();
+
+  validations.insert("email".to_string(), vec![t.email.to_string(), helpers::validator::ValidTypes::Email.to_string()]);
+  validations.insert("first_name".to_string(), vec![t.first_name.to_string(), helpers::validator::ValidTypes::AlphaNumberic.to_string()]);
+  validations.insert("last_name".to_string(), vec![t.last_name.to_string(), helpers::validator::ValidTypes::AlphaNumberic.to_string()]);
+
+  let result = helpers::validator::validate_map(validations);
+
+  result
+}
+
 pub fn post<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a> {
   use lib::schema::persons::dsl::{persons, email};
 
@@ -112,10 +126,13 @@ pub fn post<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a
     req.json_as::<models::people::NewPerson>().map_err(|e| (StatusCode::BadRequest, e))
   });
 
-  let valid_email = helpers::validator::validate(&person.email, helpers::validator::ValidTypes::Email);
+  let validation: BTreeMap<String, Vec<String>> = validate_post(&person);
+  let validation_json = validation.clone();
+  let is_valid = helpers::validator::has_errors(validation);
+
   let response;
 
-  if valid_email {
+  if is_valid {
     let results = persons.filter(email.eq(&person.email))
       .load::<models::people::Person>(&connection)
       .expect("error pulling person matching uuid");
@@ -123,6 +140,7 @@ pub fn post<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a
     if results.len() == 1 {
       let error = helpers::status::Error {
         error : "Another person is already associated with that email address.".to_string(),
+        case: Json::from_str("{}").unwrap()
       };
 
       response = helpers::status::Response {
@@ -147,8 +165,10 @@ pub fn post<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<'a
     }
 
   } else {
+      let case = format!("{:?}", validation_json);
       let error = helpers::status::Error {
-        error : "Please provide a valid email address".to_string(),
+        error : "There is one or more validation error".to_string(),
+        case: Json::from_str(&case).unwrap()
       };
 
       response = helpers::status::Response {
@@ -186,6 +206,7 @@ pub fn delete<'a>(req: &mut Request, mut res: Response<'a>) -> MiddlewareResult<
   } else {
     let error = helpers::status::Error {
       error : "The resource looks to have already been destroyed".to_string(),
+      case: Json::from_str("{}").unwrap()
     };
 
     response = helpers::status::Response {
